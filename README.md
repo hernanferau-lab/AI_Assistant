@@ -1,6 +1,13 @@
 # AI-Powered Legal Assistant
 RAG prototype for case-based decision support
 
+> **Demo / proof of concept.** This is a learning prototype built on one short, simulated
+> procedure. It shows the RAG pattern end to end (chunking, retrieval, grounded answers with
+> sources); it is not a production system and holds no real data.
+
+## Architecture (demo scope)
+<img src="./images/architecture.svg" width="800">
+
 ## Live Demo
 https://ai-document-assistant0.streamlit.app/
 
@@ -89,19 +96,24 @@ is not in the document, the assistant says so.
 
 ## Limitations (honest scope of this prototype)
 
-- Single-document knowledge base (one simulated procedure)
+- Single-document knowledge base (one simulated procedure). The document is short enough that
+  retrieval returns most of it; the pattern only pays off with a larger, multi-document corpus
 - Answers are limited to the content of that document
 - No formal evaluation metrics on answer quality yet
 - Not a replacement for professional or legal advice
 - No real-time or multi-source data integration
+- The index is built in memory on each app start (not persisted)
+- Public demo limits: 10 questions per session, 300 characters per question
 
 This is a focused MVP, not a production system. The points below are the natural next steps.
 
 ---
 
-## Next Steps (roadmap)
+## Next Steps (roadmap to a reusable template)
 
-- Multi-document knowledge base
+- Configuration per organisation (documents, language, prompt, model) with no code changes
+- Multi-document knowledge base with PDF and DOCX ingestion and section metadata
+- Persisted index, kept separate per organisation
 - Evaluation harness to measure answer quality (faithfulness / relevance)
 - Inline citations linking each claim to its source fragment
 - Role-based access control
