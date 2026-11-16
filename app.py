@@ -87,7 +87,14 @@ def build_qa_chain():
     )
 
 
-qa_chain = build_qa_chain()
+try:
+    qa_chain = build_qa_chain()
+except Exception:
+    st.warning(
+        "El demo no esta disponible en este momento (limite del servicio de IA). "
+        "Puedes revisar el codigo y la arquitectura en GitHub."
+    )
+    st.stop()
 
 # --- Interfaz ---
 pregunta = st.text_input("¿En que te puedo ayudar hoy?", max_chars=MAX_CARACTERES)
