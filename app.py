@@ -27,6 +27,16 @@ st.markdown(
     "**Prototipo de apoyo al analisis de denuncias de acoso laboral "
     "(protocolo simulado, basado en la Ley Karin 21.643).**"
 )
+st.info(
+    "Demo / proof of concept. Usa un unico documento simulado y corto, sin datos reales. "
+    "No reemplaza asesoria profesional ni legal."
+)
+
+# --- Limites de uso del demo publico (protegen el costo de la API) ---
+MAX_PREGUNTAS_POR_SESION = 10
+MAX_CARACTERES = 300
+if "preguntas_usadas" not in st.session_state:
+    st.session_state.preguntas_usadas = 0
 
 # --- Construccion del pipeline RAG (se cachea: se arma una sola vez) ---
 @st.cache_resource
@@ -80,11 +90,20 @@ def build_qa_chain():
 qa_chain = build_qa_chain()
 
 # --- Interfaz ---
-pregunta = st.text_input("¿En que te puedo ayudar hoy?")
+pregunta = st.text_input("¿En que te puedo ayudar hoy?", max_chars=MAX_CARACTERES)
+
+if pregunta and st.session_state.preguntas_usadas >= MAX_PREGUNTAS_POR_SESION:
+    st.warning("Llegaste al limite de preguntas de este demo. Recarga la pagina mas tarde.")
+    st.stop()
 
 if pregunta:
-    with st.spinner("Buscando en el documento..."):
-        resultado = qa_chain.invoke({"query": pregunta})
+    st.session_state.preguntas_usadas += 1
+    try:
+        with st.spinner("Buscando en el documento..."):
+            resultado = qa_chain.invoke({"query": pregunta})
+    except Exception:
+        st.error("No se pudo generar una respuesta en este momento. Intenta de nuevo en unos minutos.")
+        st.stop()
 
     st.markdown("### Respuesta")
     st.write(resultado["result"])
